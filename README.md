@@ -38,7 +38,8 @@ gh repo clone missingfoot/monitor-hdmi && cd monitor-hdmi
 
 `./install` does the following:
 
-- installs `i2c-tools` and `ddcutil` if they're missing (asks for sudo)
+- installs `i2c-tools`, `ddcutil` and `libnotify` if they're missing (asks
+  for sudo). ddcutil also loads the `i2c-dev` kernel module on every boot
 - copies `monitor-hdmiN.sh` to `~/.local/bin` and the "HDMI N" launcher to
   `~/.local/share/applications`, with `Exec=` pointed at your own home
 - on KDE, binds Meta+H to the launcher and removes the other input's Meta+H

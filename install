@@ -2,7 +2,7 @@
 # Install the monitor input switcher for one input.
 #   ./install 1    → monitor-hdmi1.sh + "HDMI 1" launcher
 #   ./install 2    → monitor-hdmi2.sh + "HDMI 2" launcher
-# Also installs i2c-tools/ddcutil if missing and binds Meta+H on KDE.
+# Also installs i2c-tools/ddcutil/libnotify if missing and binds Meta+H on KDE.
 set -euo pipefail
 
 n=${1:-}
@@ -19,6 +19,7 @@ desktop=$HOME/.local/share/applications/$name.desktop
 missing=()
 command -v i2ctransfer >/dev/null || missing+=(i2c-tools)
 command -v ddcutil >/dev/null || missing+=(ddcutil)
+command -v notify-send >/dev/null || missing+=(libnotify)
 if ((${#missing[@]})); then
     echo "Installing ${missing[*]}..."
     sudo pacman -S --needed --noconfirm "${missing[@]}"
