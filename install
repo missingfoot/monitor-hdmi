@@ -33,6 +33,9 @@ install -d "$(dirname "$desktop")"
 sed "s|^Exec=.*|Exec=$bin|" "hdmi-$n/$name.desktop" >"$desktop"
 echo "Installed $bin"
 echo "Installed $desktop"
+# Refresh the app menu so "HDMI $n" shows up straight away.
+command -v update-desktop-database >/dev/null && update-desktop-database -q "$(dirname "$desktop")"
+command -v kbuildsycoca6 >/dev/null && kbuildsycoca6 >/dev/null 2>&1
 
 if command -v kwriteconfig6 >/dev/null; then
     other=monitor-hdmi$((3 - n)).desktop
