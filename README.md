@@ -45,7 +45,7 @@ Input values: `0x11` = HDMI 1, `0x12` = HDMI 2, `0x01` = VGA.
    in `2` for HDMI 2):
 
    ```
-   git clone git@github.com:missingfoot/monitor-hdmi.git
+   gh repo clone missingfoot/monitor-hdmi
    cd monitor-hdmi
    install -Dm755 hdmi-1/monitor-hdmi1.sh ~/.local/bin/monitor-hdmi1.sh
    install -Dm644 hdmi-1/monitor-hdmi1.desktop ~/.local/share/applications/monitor-hdmi1.desktop
