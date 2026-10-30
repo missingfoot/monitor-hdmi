@@ -31,38 +31,30 @@ Input values: `0x11` = HDMI 1, `0x12` = HDMI 2, `0x01` = VGA.
 
 ## Setting it up on a PC (Arch/CachyOS)
 
-1. **Install the tools**
+```
+gh repo clone missingfoot/monitor-hdmi && cd monitor-hdmi
+./install 1        # or ./install 2 — the input this PC is plugged into
+```
 
-   ```
-   sudo pacman -S i2c-tools ddcutil
-   ```
+`./install` does the following:
 
-   ddcutil's udev rule gives your logged-in user access to `/dev/i2c-*`, so
-   you don't need the `i2c` group. Reboot or log out and back in afterwards.
-   Check that `ddcutil detect` lists the MX279.
+- installs `i2c-tools` and `ddcutil` if they're missing (asks for sudo)
+- copies `monitor-hdmiN.sh` to `~/.local/bin` and the "HDMI N" launcher to
+  `~/.local/share/applications`, with `Exec=` pointed at your own home
+- on KDE, binds Meta+H to the launcher and removes the other input's Meta+H
+  binding if it exists. The keyboard has a key that sends Super+H.
 
-2. **Install the script and launcher.** Using HDMI 1 as the example (swap
-   in `2` for HDMI 2):
+Then **log out and back in**. ddcutil's udev rule (which gives your user
+access to `/dev/i2c-*`) and Plasma 6 launcher shortcuts both only apply at
+login. To test, put the monitor on the other input and run `monitor-hdmiN.sh`
+in a terminal. It should exit with code 0 and the monitor should switch.
 
-   ```
-   gh repo clone missingfoot/monitor-hdmi
-   cd monitor-hdmi
-   install -Dm755 hdmi-1/monitor-hdmi1.sh ~/.local/bin/monitor-hdmi1.sh
-   install -Dm644 hdmi-1/monitor-hdmi1.desktop ~/.local/share/applications/monitor-hdmi1.desktop
-   ```
+On Xfce, bind the hotkey yourself: Settings → Keyboard → Application
+Shortcuts → `<Super>h` → the script.
 
-   Change the launcher's `Exec=` path if the username isn't `james`.
-
-3. **Hotkey (optional).** The keyboard has a key that sends Super+H.
-   - KDE: System Settings → Shortcuts → add the "HDMI 1" launcher and set it
-     to Meta+H. This writes `[services][monitor-hdmi1.desktop] _launch=Meta+H`
-     to `~/.config/kglobalshortcutsrc`. **Log out and back in**, because
-     Plasma 6 only loads launcher shortcuts at login.
-   - Xfce: Settings → Keyboard → Application Shortcuts → `<Super>h` → the
-     script.
-
-4. **Test.** With the monitor on the other input, run the script from a
-   terminal. It should exit with code 0 and the monitor should switch.
+To do it by hand, install the two packages and copy the files from `hdmi-N/`
+to the same places. The shortcut lives in `~/.config/kglobalshortcutsrc` as
+`[services][monitor-hdmiN.desktop] _launch=Meta+H`.
 
 ## Troubleshooting
 

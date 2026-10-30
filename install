@@ -1,0 +1,48 @@
+#!/usr/bin/env bash
+# Install the monitor input switcher for one input.
+#   ./install 1    → monitor-hdmi1.sh + "HDMI 1" launcher
+#   ./install 2    → monitor-hdmi2.sh + "HDMI 2" launcher
+# Also installs i2c-tools/ddcutil if missing and binds Meta+H on KDE.
+set -euo pipefail
+
+n=${1:-}
+if [[ $n != 1 && $n != 2 ]]; then
+    echo "usage: $0 1|2   (the HDMI input this PC is plugged into)" >&2
+    exit 1
+fi
+
+cd "$(dirname "$0")"
+name=monitor-hdmi$n
+bin=$HOME/.local/bin/$name.sh
+desktop=$HOME/.local/share/applications/$name.desktop
+
+missing=()
+command -v i2ctransfer >/dev/null || missing+=(i2c-tools)
+command -v ddcutil >/dev/null || missing+=(ddcutil)
+if ((${#missing[@]})); then
+    echo "Installing ${missing[*]}..."
+    sudo pacman -S --needed --noconfirm "${missing[@]}"
+    relogin=1
+fi
+[[ -e /dev/i2c-0 ]] || sudo modprobe i2c-dev
+
+install -Dm755 "hdmi-$n/$name.sh" "$bin"
+# The launcher's Exec= has to be an absolute path, so point it at this user's home.
+install -d "$(dirname "$desktop")"
+sed "s|^Exec=.*|Exec=$bin|" "hdmi-$n/$name.desktop" >"$desktop"
+echo "Installed $bin"
+echo "Installed $desktop"
+
+if command -v kwriteconfig6 >/dev/null; then
+    other=monitor-hdmi$((3 - n)).desktop
+    kwriteconfig6 --file kglobalshortcutsrc --group services --group "$other" --key _launch --delete
+    kwriteconfig6 --file kglobalshortcutsrc --group services --group "$name.desktop" --key _launch "Meta+H"
+    echo "Bound Meta+H to \"HDMI $n\" (KDE picks it up at next login)."
+    relogin=1
+fi
+
+if [[ -n ${relogin:-} ]]; then
+    echo "Log out and back in, then run $name.sh to test."
+else
+    echo "Run $name.sh to test."
+fi
