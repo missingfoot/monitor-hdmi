@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Name=HDMI 2
+Comment=Switch monitor input source to HDMI-2 via DDC/CI
+Exec=/home/james/.local/bin/monitor-hdmi2.sh
+Icon=video-display
+Terminal=false
+Categories=Utility;
+Keywords=monitor;input;hdmi;ddc;display;switch;
